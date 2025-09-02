@@ -1,0 +1,118 @@
+#!/bin/bash
+
+command=$1
+type=$2
+name=$3
+flags=${@:4}
+
+# JQ colors
+colors='{
+  "black": "\u001b[30m",
+  "red": "\u001b[31m",
+  "green": "\u001b[32m",
+  "yellow": "\u001b[33m",
+  "blue": "\u001b[34m",
+  "magenta": "\u001b[35m",
+  "cyan": "\u001b[36m",
+  "white": "\u001b[37m",
+  "reset": "\u001b[0m"
+}'
+
+contains() {
+  local element="$1"
+  shift
+  local arr=("$@")
+  for e in "${arr[@]}"; do
+    if [[ "$e" == "$element" ]]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+klaas_get_pods() {
+  local exclude_array=("$@")
+  existing_pods=($(kubectl get pods -o jsonpath='{.items[*].metadata.name}'))
+  local pods=()
+
+  for pod in "${existing_pods[@]}"; do
+    if ! contains "$pod" "${exclude_array[@]}"; then
+      pods+=("$pod")
+    fi
+  done
+
+  printf "%s\n" "${pods[@]}"
+}
+
+klaas_get_deployments() {
+  local exclude_array=("$@")
+  existing_deployments=($(kubectl get deployments.app -o jsonpath='{.items[*].metadata.name}'))
+  local deployments=()
+
+  for deployment in "${existing_deployments[@]}"; do
+    if ! contains "$deployment" "${exclude_array[@]}"; then
+      deployments+=("$deployment")
+    fi
+  done
+
+  printf "%s\n" "${deployment[@]}"
+}
+
+klaas_get_serviceaccounts() {
+  local -a serviceaccounts
+  serviceaccounts=($(kubectl get serviceaccounts -o jsonpath='{.items[*].metadata.name}'))
+  printf "%s\n" "${serviceaccounts[@]}"
+}
+
+klaas_get_namespace() {
+  local -a namespaces
+  namespaces=($(kubectl get ns -o jsonpath='{.items[*].metadata.name}'))
+  printf "%s\n" "${namespaces[@]}"
+}
+
+klaas_get_configmap() {
+  local -a configmap
+  configmap=($(kubectl get configmap -o jsonpath='{.items[*].metadata.name}'))
+  printf "%s\n" "${configmap[@]}"
+}
+
+declare -A KLAAS_EXTENSIONS
+
+# Function to register an extension
+register_klaas_extension() {
+    local cmd="$1"
+    local type="$2"
+    KLAAS_EXTENSIONS["${cmd}.${type}"]="${cmd}_${type//./_}"
+}
+
+# Load extensions
+EXT_DIR="/.laas-config/klaas/extensions"
+if [ -d "$EXT_DIR" ]; then
+  for ext in "$EXT_DIR"/*.sh; do
+    [ -f "$ext" ] && source "$ext"
+  done
+fi
+
+# Main dispatcher
+case ${command} in
+  list-extensions)
+    for key in "${!KLAAS_EXTENSIONS[@]}"; do
+      echo "$key"
+    done
+    ;;
+  complete)
+    cmd=$2
+    typ=$3
+    comp_func="${cmd}_${typ//./_}_completion"
+    if declare -F "$comp_func" >/dev/null; then
+      $comp_func "${@:4}"
+    fi
+    ;;
+  *)
+    if [[ -n "${KLAAS_EXTENSIONS["$command.$type"]}" ]]; then
+      "${KLAAS_EXTENSIONS["$command.$type"]}" "${@:3}"
+    else
+      echo "Unknown command: ${command} ${type}"
+    fi
+    ;;
+esac

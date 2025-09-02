@@ -1,0 +1,29 @@
+cluster=$1
+user=${cluster}
+user_path="/kube-profiles/${user}"
+
+if [ ! -d "${user_path}" ]; then
+  mkdir ${user_path}
+fi
+
+if [ ! -e "${user_path}/.zshrc" ]; then
+    echo "source /usr/local/share/oh-my-zsh/common.zshrc" > ${user_path}/.zshrc
+fi
+
+if [ ! -d "${user_path}/.kube" ]; then
+  mkdir ${user_path}/.kube
+fi
+
+if [ ! -e "${user_path}/.kube/config" ]; then
+  touch ${user_path}/.kube/config
+fi
+
+test_user_exist=$(cat /etc/passwd |grep "^${user}:" )
+if [ -z "${test_user_exist}" ];then
+  useradd ${user} --home ${user_path}
+  usermod -aG sudo ${user}
+  usermod --shell /bin/zsh ${user}
+fi
+
+chmod 600 ${user_path}/.kube/config
+chown -R ${user}:${user} ${user_path}

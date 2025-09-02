@@ -1,0 +1,29 @@
+{
+  "gitvarmng.gitlabTokens": [
+      {
+          "domain": "gitlab.fr",
+          "privateToken": "",
+          "defaultSavPath": "\/data\/gitlab-var"
+      }
+  ],
+  "files.eol": "\n",
+  "editor.tabSize": 2,
+  "editor.minimap.enabled": false,
+  "workbench.colorTheme": "Default Dark Modern",
+  "terminal.integrated.fontFamily": "'FiraCode Nerd Font Mono'",
+  "editor.fontFamily": "'FiraCode Nerd Font Mono'",
+  "redhat.telemetry.enabled": false,
+  "vs-kubernetes": {
+      "vs-kubernetes.knownKubeconfigs": [
+          "/kube-profiles/all/.kube/config"
+      ],
+      "vs-kubernetes.kubeconfig": "/kube-profiles/all/.kube/config",
+      "vs-kubernetes.crd-code-completion": "disabled"
+  },
+  "terminal.integrated.defaultProfile.linux": "laas",
+  "yaml.schemas": {
+      "https://gitlab.com/gitlab-org/gitlab/-/raw/master/app/assets/javascripts/editor/schema/ci.json": "*.gitlab-dev.yml",
+      "https://gitlab.com/gitlab-org/gitlab/-/raw/master/app/assets/javascripts/editor/schema/ci.json": ".gitlab-cd.yml"
+  },
+  "hediet.vscode-drawio.resizeImages": null
+}

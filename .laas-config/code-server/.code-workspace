@@ -1,0 +1,29 @@
+{
+  "folders": [
+    {
+      "path": "/workdir"
+    },
+    {
+      "path": "/data"
+    }
+  ],
+  "settings": {
+    "window.title": "lab as a services",
+    "terminal.integrated.defaultLocation": "editor",
+    "terminal.integrated.shell.linux": "/bin/zsh",
+    "terminal.integrated.shellArgs.linux": [],
+    "terminal.integrated.cwd": "/workdir",
+    "terminal.integrated.autoOpen": true,
+    "terminal.integrated.tabs.showActiveTerminal":"singleTerminal",
+    "terminal.integrated.profiles.linux": {
+      "laas": {
+        "path": "zsh",
+        "args": [],
+        "color": "terminal.ansiCyan",
+        "overrideName": true,
+        "icon": "beaker"
+      }
+    }
+  },
+  "extensions": {}
+}

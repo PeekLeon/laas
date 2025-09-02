@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [ "$PRE_COMMIT_HELM_LINT" = "true" ] || [ "$PRE_COMMIT_HELM_LINT" = "1" ]; then
+. /usr/share/.git-hooks/helm-lint.sh
+fi
+
+if [ "$PRE_COMMIT_GITLAB_LINT" = "true" ] || [ "$PRE_COMMIT_GITLAB_LINT" = "1" ]; then
+. /usr/share/.git-hooks/gitlab-lint.sh
+fi
+
+if [ "$PRE_COMMIT_GITLEAKS" = "true" ] || [ "$PRE_COMMIT_GITLEAKS" = "1" ]; then
+. /usr/share/.git-hooks/gitleaks.sh
+fi

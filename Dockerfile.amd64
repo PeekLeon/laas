@@ -1,0 +1,116 @@
+FROM ubuntu:latest AS builder
+
+# Installer les prérequis de base
+RUN apt-get update && apt-get install -y \
+    curl wget gnupg lsb-release ca-certificates git unzip zip sudo \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copier le fichier de versions
+COPY versions.env /tmp/versions.env
+
+# Installer jq
+RUN set -a && . /tmp/versions.env && set +a \
+    && curl -Lo /usr/local/bin/jq https://github.com/stedolan/jq/releases/download/$JQ_VERSION/jq-linux64 \
+    && chmod +x /usr/local/bin/jq
+
+# Installer yq
+RUN set -a && . /tmp/versions.env && set +a \
+    && wget https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 -O /usr/local/bin/yq \
+    && chmod +x /usr/local/bin/yq
+
+# Installer helm
+RUN set -a && . /tmp/versions.env && set +a \
+    && curl -Lo helm.tar.gz https://get.helm.sh/helm-$HELM_VERSION-linux-amd64.tar.gz \
+    && tar -zxvf helm.tar.gz \
+    && mv linux-amd64/helm /usr/local/bin/helm \
+    && chmod +x /usr/local/bin/helm
+
+# Installer starship
+RUN set -a && . /tmp/versions.env && set +a \
+    && curl -fsSL https://starship.rs/install.sh | sh -s -- -y --version $STARSHIP_VERSION
+
+# Installer oh-my-zsh
+RUN set -a && . /tmp/versions.env && set +a \
+    && git clone https://github.com/ohmyzsh/ohmyzsh.git /opt/oh-my-zsh \
+    && cd /opt/oh-my-zsh && git checkout $OHMYZSH_VERSION
+
+# Installer kubectl
+RUN set -a && . /tmp/versions.env && set +a \
+    && curl -LO "https://dl.k8s.io/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl" \
+    && install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl \
+    && rm kubectl
+
+# Installer kubecf
+RUN set -a && . /tmp/versions.env && set +a \
+    && curl -Lo kubernetes-conform.tar.gz https://github.com/yannh/kubeconform/releases/download/$KUBECONFORM_VERSION/kubeconform-linux-amd64.tar.gz \
+    && tar -zxvf kubernetes-conform.tar.gz \
+    && mv kubeconform /usr/local/bin/kubeconform \
+    && chmod +x /usr/local/bin/kubeconform
+
+RUN set -a && . /tmp/versions.env && set +a \
+    && curl -sSLo /usr/local/bin/mc "https://dl.min.io/client/mc/release/linux-amd64/mc.${MC_VERSION}" \
+    && chmod +x /usr/local/bin/mc
+
+RUN set -a && . /tmp/versions.env && set +a \
+    && curl -Lo code-server.tar.gz https://github.com/coder/code-server/releases/download/${CODE_SERVER_VERSION}/code-server-${CODE_SERVER_VERSION#v}-linux-amd64.tar.gz \
+    && tar -xzf code-server.tar.gz \
+    && mv code-server-${CODE_SERVER_VERSION#v}-linux-amd64 /usr/lib/code-server 
+
+COPY ./tools/kube/* /usr/local/bin/.
+
+# Commande par défaut
+CMD [ "bash" ]
+
+
+FROM ubuntu:24.04 AS final
+
+# Copier le fichier de versions depuis le builder
+COPY --from=builder /tmp/versions.env /tmp/versions.env
+
+RUN set -eux \
+    && set -a && . /tmp/versions.env && set +a \
+    \
+    # Dépendances de base
+    && apt-get update -y \
+    && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends \
+        wget curl netcat-traditional git vim sudo tmux \
+        inetutils-ping dnsutils rsync zsh \
+        ca-certificates gnupg lsb-release \
+    \
+    # Config zsh par défaut
+    && chsh -s /usr/bin/zsh \
+    \
+    # Ajout repo Docker CE
+    && mkdir -p /etc/apt/keyrings \
+    && curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+       | gpg --dearmor -o /etc/apt/keyrings/docker.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+       https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
+       > /etc/apt/sources.list.d/docker.list \
+    \
+    # Installer docker-cli avec version pin depuis versions.env
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+       docker-ce-cli=${DOCKER_VERSION} \
+       docker-compose-plugin \
+    \
+    # Nettoyage
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copier les binaires depuis le builder
+COPY --from=builder /usr/lib/code-server /usr/lib/code-server
+COPY --chmod=755 --from=builder /usr/local/bin/* /usr/local/bin/
+
+# Copier les conf laas
+COPY .laas-config /.laas-config
+
+# GIT Hooks
+COPY --chmod=755 ./git/.git-hooks /usr/share/.git-hooks
+
+# Copier oh-my-zsh depuis le builder
+COPY --from=builder /opt/oh-my-zsh /opt/oh-my-zsh
+
+COPY --chmod=755 ./entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
