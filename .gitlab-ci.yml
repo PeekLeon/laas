@@ -1,0 +1,29 @@
+stages:
+  - build-n-push
+
+variables:
+  IMAGE_NAME: docker.io/peekleon/laas
+  IMAGE_TAG: latest
+  STORAGE_DRIVER: vfs
+
+
+build:
+  stage: build-n-push
+  image: quay.io/buildah/stable:latest
+  script:
+    - echo "$DOCKERHUB_PASSWORD" | buildah --storage-driver=$STORAGE_DRIVER login -u "$DOCKERHUB_USERNAME" --password-stdin docker.io
+    
+    - | 
+      buildah --storage-driver=$STORAGE_DRIVER bud --format=docker --layers=false --platform linux/amd64 -t $IMAGE_NAME:$IMAGE_TAG-amd64 .
+      buildah --storage-driver=$STORAGE_DRIVER bud --platform linux/arm64 -t $IMAGE_NAME:$IMAGE_TAG-arm64 .
+
+      # Créer un manifest list et ajouter les deux images
+      buildah manifest create $IMAGE_NAME:$IMAGE_TAG
+      buildah manifest add $IMAGE_NAME:$IMAGE_TAG containers-storage:$IMAGE_NAME:$IMAGE_TAG-amd64
+      buildah manifest add $IMAGE_NAME:$IMAGE_TAG containers-storage:$IMAGE_NAME:$IMAGE_TAG-arm64
+
+      # Vérifier le manifest
+      buildah manifest inspect $IMAGE_NAME:$IMAGE_TAG
+   
+    # Push multi-arch
+    - buildah manifest push --all $IMAGE_NAME:$IMAGE_TAG docker://$IMAGE_NAME:$IMAGE_TAG
