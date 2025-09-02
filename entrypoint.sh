@@ -118,5 +118,13 @@ cp /.laas-config/code-server/media/favicon.svg /usr/lib/code-server/src/browser/
 cp /.laas-config/code-server/media/favicon.svg /usr/lib/code-server/src/browser/media/favicon-dark-support.svg
 cp /.laas-config/code-server/media/favicon.ico /usr/lib/code-server/src/browser/media/favicon.ico
 
+
+EXTRA_ENTRYPOINT="/.laas-config/entrypoint_extra.sh"
+if [ -f "$EXTRA_ENTRYPOINT" ]; then
+    echo "Sourcing $EXTRA_ENTRYPOINT..."
+    # shellcheck source=/dev/null
+    source "$EXTRA_ENTRYPOINT"
+fi
+
 # Start code-server
 /usr/lib/code-server/bin/code-server --bind-addr 0.0.0.0:8080
