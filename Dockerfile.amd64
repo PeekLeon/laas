@@ -75,7 +75,7 @@ RUN set -eux \
     && apt-get upgrade -y \
     && apt-get install -y --no-install-recommends \
         wget curl netcat-traditional git vim sudo tmux \
-        inetutils-ping dnsutils rsync zsh \
+        inetutils-ping dnsutils rsync zsh openssh-client \
         ca-certificates gnupg lsb-release \
     \
     # Config zsh par défaut
