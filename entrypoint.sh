@@ -105,6 +105,7 @@ for suffix in "${!LOGIN[@]}"; do
     echo "info URL: $url, Login: $login, email: $email, name: $name"
     echo -e "protocol=https\nhost=${url}\nusername=${login//@/%40}\npassword=${pass}" | git credential approve
     echo "$url|$name|$email" >> "$CONFIG_FILE"
+    unset GIT_PASSWORD_$suffix
     if [[ $? -eq 0 ]];then
       echo "info Git configuration OK"
     else
