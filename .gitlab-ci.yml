@@ -3,13 +3,14 @@ stages:
 
 variables:
   IMAGE_NAME: docker.io/peekleon/laas
-  IMAGE_TAG: latest
+  IMAGE_TAG: $CI_COMMIT_TAG
+  IMAGE_TAG_SPECIFIC:
   STORAGE_DRIVER: vfs
 
 
 build:
   stage: build-n-push
-  image: quay.io/buildah/stable:latest
+  image: quay.io/buildah/stable:${IMAGE_TAG_SPECIFIC}
   script:
     - echo "$DOCKERHUB_PASSWORD" | buildah --storage-driver=$STORAGE_DRIVER login -u "$DOCKERHUB_USERNAME" --password-stdin docker.io
     
@@ -17,13 +18,18 @@ build:
       buildah --storage-driver=$STORAGE_DRIVER bud -f Dockerfile.amd64 --format=docker --layers=false --platform linux/amd64 -t $IMAGE_NAME:$IMAGE_TAG-amd64 .
       # buildah --storage-driver=$STORAGE_DRIVER bud --platform linux/arm64 -t $IMAGE_NAME:$IMAGE_TAG-arm64 .
 
-      # Créer un manifest list et ajouter les deux images
-      buildah manifest create $IMAGE_NAME:$IMAGE_TAG
-      buildah manifest add $IMAGE_NAME:$IMAGE_TAG containers-storage:$IMAGE_NAME:$IMAGE_TAG-amd64
-      # buildah manifest add $IMAGE_NAME:$IMAGE_TAG containers-storage:$IMAGE_NAME:$IMAGE_TAG-arm64
+      # Créer le manifest list pour le tag versionné
+      buildah manifest create $IMAGE_NAME:${CI_COMMIT_TAG}
+      buildah manifest add $IMAGE_NAME:${CI_COMMIT_TAG} containers-storage:$IMAGE_NAME:${CI_COMMIT_TAG}-amd64
+      # buildah manifest add $IMAGE_NAME:${CI_COMMIT_TAG} containers-storage:$IMAGE_NAME:${CI_COMMIT_TAG}-arm64
+      buildah manifest push --all $IMAGE_NAME:${CI_COMMIT_TAG} docker://$IMAGE_NAME:${CI_COMMIT_TAG}
 
-      # Vérifier le manifest
-      buildah manifest inspect $IMAGE_NAME:$IMAGE_TAG
-   
-    # Push multi-arch
-    - buildah manifest push --all $IMAGE_NAME:$IMAGE_TAG docker://$IMAGE_NAME:$IMAGE_TAG
+      if [ -n "$IMAGE_TAG_SPECIFIC" ]; then
+        # Créer le manifest list pour ${IMAGE_TAG_SPECIFIC}
+        buildah tag $IMAGE_NAME:${CI_COMMIT_TAG}-amd64 $IMAGE_NAME:${IMAGE_TAG_SPECIFIC}-amd64
+        # buildah tag $IMAGE_NAME:${CI_COMMIT_TAG}-arm64 $IMAGE_NAME:${IMAGE_TAG_SPECIFIC}-arm64
+        buildah manifest create $IMAGE_NAME:${IMAGE_TAG_SPECIFIC}
+        buildah manifest add $IMAGE_NAME:${IMAGE_TAG_SPECIFIC} containers-storage:$IMAGE_NAME:${IMAGE_TAG_SPECIFIC}-amd64
+        # buildah manifest add $IMAGE_NAME:${IMAGE_TAG_SPECIFIC} containers-storage:$IMAGE_NAME:${IMAGE_TAG_SPECIFIC}-arm64
+        buildah manifest push --all $IMAGE_NAME:${IMAGE_TAG_SPECIFIC} docker://$IMAGE_NAME:${IMAGE_TAG_SPECIFIC}
+      fi
