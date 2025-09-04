@@ -121,7 +121,7 @@ if [ "$VS_INSTALL_DEFAULT_EXTENSIONS_LOWER" = "true" ] || [ "$VS_INSTALL_DEFAULT
     echo "info Default vs code extensions installation"
     while IFS= read -r extension || [ -n "$extension" ]; do
     # Install each extension
-    code-server --install-extension "$extension"
+    /usr/lib/code-server/bin/code-server --install-extension "$extension"
     done < /.laas-config/code-server/default-extensions.txt
 fi
 
