@@ -105,13 +105,25 @@ for suffix in "${!LOGIN[@]}"; do
     echo "info URL: $url, Login: $login, email: $email, name: $name"
     echo -e "protocol=https\nhost=${url}\nusername=${login//@/%40}\npassword=${pass}" | git credential approve
     echo "$url|$name|$email" >> "$CONFIG_FILE"
-    unset GIT_PASSWORD_$suffix
     if [[ $? -eq 0 ]];then
       echo "info Git configuration OK"
     else
       echo "error: Git configuration"
     fi
 done
+
+# code-server extensiosn
+# Install default extensions
+VS_INSTALL_DEFAULT_EXTENSIONS_LOWER=$(echo "$VS_INSTALL_DEFAULT_EXTENSIONS" | tr '[:upper:]' '[:lower:]')
+
+# Check if the environment variable is set to true (in any case) or 1
+if [ "$VS_INSTALL_DEFAULT_EXTENSIONS_LOWER" = "true" ] || [ "$VS_INSTALL_DEFAULT_EXTENSIONS_LOWER" = "1" ]; then
+    echo "info Default vs code extensions installation"
+    while IFS= read -r extension || [ -n "$extension" ]; do
+    # Install each extension
+    code-server --install-extension "$extension"
+    done < /.laas-config/code-server/default-extensions.txt
+fi
 
 # favicon
 rm -f /usr/lib/code-server/src/browser/media/pwa*
@@ -126,6 +138,13 @@ if [ -f "$EXTRA_ENTRYPOINT" ]; then
     # shellcheck source=/dev/null
     source "$EXTRA_ENTRYPOINT"
 fi
+
+# Clean gitlab password
+while IFS='=' read -r name value; do
+  if [[ $name == ${PREFIX_PASS}* ]]; then
+    unset $name
+  fi
+done < <(env)
 
 # Start code-server
 /usr/lib/code-server/bin/code-server --bind-addr 0.0.0.0:8080
