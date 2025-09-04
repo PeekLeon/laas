@@ -57,6 +57,7 @@ RUN set -a && . /tmp/versions.laas && set +a \
     && mv code-server-${CODE_SERVER_VERSION#v}-linux-amd64 /usr/lib/code-server 
 
 COPY ./tools/kube/* /usr/local/bin/.
+COPY ./tools/laas /usr/local/bin/laas
 
 # Commande par défaut
 CMD [ "bash" ]
