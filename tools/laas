@@ -1,0 +1,131 @@
+#!/usr/bin/env bash
+# set -euo pipefail
+
+declare -A colors=(
+  [black]="\033[30m"
+  [red]="\033[31m"
+  [green]="\033[32m"
+  [yellow]="\033[33m"
+  [blue]="\033[34m"
+  [magenta]="\033[35m"
+  [cyan]="\033[36m"
+  [white]="\033[37m"
+  [reset]="\033[0m"
+)
+
+update(){
+  # Liste des repos à surveiller
+  # Format: "nom=repoGitHub"
+  declare -A repos=(
+    [YQ]=mikefarah/yq
+    [JQ]=jqlang/jq
+    [KUBECONFORM]=yannh/kubeconform
+    [MC]=minio/mc
+    [STARSHIP]=starship/starship
+    [HELM]=helm/helm
+    [CODE_SERVER]=coder/code-server
+  )
+
+  # Fichier de sortie
+  OUTFILE="${LAAS_VERSION_DIR%/}/versions.laas"
+  : > "$OUTFILE"
+
+  echo "# $(date)" >> "$OUTFILE"
+
+  for name in "${!repos[@]}"; do
+    repo="${repos[$name]}"
+    version=$(curl -s https://api.github.com/repos/$repo/releases/latest \
+              | grep tag_name | cut -d '"' -f4)
+    echo "${name}_VERSION=$version" | tee -a "$OUTFILE"
+  done
+
+  version=$(curl -s https://api.github.com/repos/ohmyzsh/ohmyzsh/commits/master \
+            | grep sha | head -n 1 | cut -d '"' -f4)
+  echo "OHMYZSH_VERSION=$version" | tee -a "$OUTFILE"
+
+  version=$(curl -L -s https://dl.k8s.io/release/stable.txt)
+  echo "KUBECTL_VERSION=$version" | tee -a "$OUTFILE"
+
+  version=$(apt-cache madison docker-ce | grep -v beta | head -n1 | awk '{print $3}')
+  echo "DOCKER_VERSION=$version" | tee -a "$OUTFILE"
+
+  compare_versions
+}
+
+info(){
+  cat /.laas-config/versions.laas
+}
+
+usage(){
+  echo "Usage: \n"
+  echo "$0 info - Get versions used in laas"
+  echo "$0 update - Create versions.laas file"
+}
+
+#!/bin/bash
+
+compare_versions() {
+  file2="${LAAS_VERSION_DIR%/}/versions.laas"
+  file1=/.laas-config/versions.laas
+  local change=0
+  # Charger les variables des fichiers dans des tableaux associatifs
+  declare -A vars1 vars2
+
+  # Ignorer les lignes qui commencent par #
+  while IFS='=' read -r key value; do
+    [[ "$key" =~ ^#|^$ ]] && continue
+    vars1["$key"]="$value"
+  done < "$file1"
+
+  while IFS='=' read -r key value; do
+    [[ "$key" =~ ^#|^$ ]] && continue
+    vars2["$key"]="$value"
+  done < "$file2"
+
+  echo "Comparing $file1 → $file2"
+  echo
+
+  # Vérifier chaque variable du fichier 1
+  for key in "${!vars1[@]}"; do
+    if [[ -v vars2["$key"] ]]; then
+      if [[ "${vars1[$key]}" == "${vars2[$key]}" ]]; then
+        echo -e "$key : ${colors[blue]} no change  ${colors[reset]}"
+      else
+        echo -e "$key : ${colors[green]} updated (${vars1[$key]} → ${vars2[$key]}) ${colors[reset]}"
+        change=$((change + 1))
+      fi
+    else
+      echo -e "$key : ${colors[red]} removed ${colors[reset]}"
+      change=$((change + 1))
+    fi
+  done
+  
+  # Vérifier les nouvelles variables dans file2
+  for key in "${!vars2[@]}"; do
+    if [[ ! -v vars1["$key"] ]]; then
+      echo "$key : new (${vars2[$key]})"
+    fi
+  done
+}
+
+
+if [ -z "$1" ]; then
+  usage
+  exit 1
+else
+  case "$1" in
+    update)
+      update
+      ;;
+    info)
+      info
+      ;;
+    compare_versions)
+      compare_versions
+      ;;
+    *)
+      echo "Unknown option: $1"
+      usage
+      ;;
+    esac
+fi
