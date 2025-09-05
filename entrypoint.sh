@@ -147,4 +147,4 @@ while IFS='=' read -r name value; do
 done < <(env)
 
 # Start code-server
-/usr/lib/code-server/bin/code-server --bind-addr 0.0.0.0:8080
+/usr/lib/code-server/bin/code-server --bind-addr 0.0.0.0:80
