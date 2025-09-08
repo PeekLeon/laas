@@ -46,6 +46,7 @@ update(){
   version=$(curl -L -s https://dl.k8s.io/release/stable.txt)
   echo "KUBECTL_VERSION=$version" | tee -a "$OUTFILE"
 
+  apt update
   version=$(apt-cache madison docker-ce | grep -v beta | head -n1 | awk '{print $3}')
   echo "DOCKER_VERSION=$version" | tee -a "$OUTFILE"
 
@@ -89,7 +90,7 @@ compare_versions() {
   for key in "${!vars1[@]}"; do
     if [[ -v vars2["$key"] ]]; then
       if [[ "${vars1[$key]}" == "${vars2[$key]}" ]]; then
-        echo -e "$key : ${colors[blue]} no change  ${colors[reset]}"
+        echo -e "$key : ${colors[blue]} no change (${vars2[$key]}) ${colors[reset]}"
       else
         echo -e "$key : ${colors[green]} updated (${vars1[$key]} → ${vars2[$key]}) ${colors[reset]}"
         change=$((change + 1))
