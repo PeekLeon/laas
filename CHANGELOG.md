@@ -1,5 +1,31 @@
 
 
+## LAAS 1.1.2 => **1.1.3**
+
+### New :
+- kube alias
+- klaas logs tmux autocompletion
+- change log autocreation
+
+### Debug :
+
+- klaas : deployment autocompletion
+
+
+| App | Status | Old Value | New Value |
+|-----|--------|-----------|-----------|
+| DOCKER | No change | 5:28.4.0-1~ubuntu.24.04~noble | 5:28.4.0-1~ubuntu.24.04~noble |
+| STARSHIP | No change | v1.23.0 | v1.23.0 |
+| KUBECONFORM | No change | v0.7.0 | v0.7.0 |
+| MC | No change | RELEASE.2025-08-13T08-35-41Z | RELEASE.2025-08-13T08-35-41Z |
+| OHMYZSH | No change | 8c168e26625ac8376d9156b1b189cd2ae8c16dc7 | 8c168e26625ac8376d9156b1b189cd2ae8c16dc7 |
+| HELM | No change | v3.18.6 | v3.18.6 |
+| KUBECTL | No change | v1.34.0 | v1.34.0 |
+| JQ | No change | jq-1.8.1 | jq-1.8.1 |
+| CODE_SERVER | No change | v4.103.2 | v4.103.2 |
+| YQ | Updated | v4.47.1 | v4.47.2 |
+
+
 ## LAAS 1.1.1 => **1.1.2**
 
 | App | Status | Old Value | New Value |

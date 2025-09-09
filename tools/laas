@@ -27,11 +27,11 @@ update(){
   )
 
   # Fichier de sortie
-  OUTFILE="${LAAS_VERSION_DIR%/}/versions.laas"
+  OUTFILE="${LAAS_PROJECT_DIR%/}/.laas-config/versions.laas"
   : > "$OUTFILE"
 
   echo "# $(date)" >> "$OUTFILE"
-
+  echo "LAAS_VERSION=$1" | tee -a "$OUTFILE"
   for name in "${!repos[@]}"; do
     repo="${repos[$name]}"
     version=$(curl -s https://api.github.com/repos/$repo/releases/latest \
@@ -66,7 +66,7 @@ usage(){
 #!/bin/bash
 
 compare_versions() {
-  file2="${LAAS_VERSION_DIR%/}/versions.laas"
+  file2="${LAAS_PROJECT_DIR%/}/.laas-config/versions.laas"
   file1=/.laas-config/versions.laas
   local change=0
   # Charger les variables des fichiers dans des tableaux associatifs
@@ -109,6 +109,61 @@ compare_versions() {
   done
 }
 
+compare_versions_md() {
+  file2="${LAAS_PROJECT_DIR%/}/.laas-config/versions.laas"
+  file1=/.laas-config/versions.laas
+  local change=0
+  declare -A vars1 vars2
+
+  # Charger les variables des fichiers dans des tableaux associatifs
+  while IFS='=' read -r key value; do
+    [[ "$key" =~ ^#|^$ ]] && continue
+    vars1["$key"]="$value"
+  done < "$file1"
+
+  while IFS='=' read -r key value; do
+    [[ "$key" =~ ^#|^$ ]] && continue
+    vars2["$key"]="$value"
+  done < "$file2"
+
+  # Récupérer la version LAAS
+  old_laas="${vars1[LAAS_VERSION]}"
+  new_laas="${vars2[LAAS_VERSION]}"
+  echo -e "\n\n## LAAS $old_laas => **$new_laas**\n"
+  
+  # En-tête du tableau Markdown
+  echo "| App | Status | Old Value | New Value |"
+  echo "|-----|--------|-----------|-----------|"
+
+  # Vérifier chaque variable du fichier 1 (sauf LAAS_VERSION)
+  for key in "${!vars1[@]}"; do
+    [[ "$key" == "LAAS_VERSION" ]] && continue
+    if [[ -v vars2["$key"] ]]; then
+      if [[ "${vars1[$key]}" == "${vars2[$key]}" ]]; then
+        echo "| ${key%_VERSION} | No change | ${vars1[$key]} | ${vars2[$key]} |"
+      else
+        echo "| ${key%_VERSION} | Updated | ${vars1[$key]} | ${vars2[$key]} |"
+        change=$((change + 1))
+      fi
+    else
+      echo "| ${key%_VERSION} | Removed | ${vars1[$key]} | - |"
+      change=$((change + 1))
+    fi
+  done
+
+  # Vérifier les nouvelles variables dans file2 (sauf LAAS_VERSION)
+  for key in "${!vars2[@]}"; do
+    [[ "$key" == "LAAS_VERSION" ]] && continue
+    if [[ ! -v vars1["$key"] ]]; then
+      echo "| ${key%_VERSION} | New | - | ${vars2[$key]} |"
+    fi
+  done
+}
+
+set_changelog(){
+  md=$(compare_versions_md)
+  { echo "${md}"; cat ${LAAS_PROJECT_DIR%/}/CHANGELOG.md; } > tmp && mv tmp ${LAAS_PROJECT_DIR%/}/CHANGELOG.md
+}
 
 if [ -z "$1" ]; then
   usage
@@ -116,13 +171,19 @@ if [ -z "$1" ]; then
 else
   case "$1" in
     update)
-      update
+      update $2
       ;;
     info)
       info
       ;;
     compare_versions)
       compare_versions
+      ;;
+    compare_versions_md)
+      compare_versions_md
+      ;;
+    set_changelog)
+      set_changelog
       ;;
     *)
       echo "Unknown option: $1"
