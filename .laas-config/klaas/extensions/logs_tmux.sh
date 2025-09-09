@@ -73,5 +73,13 @@ logs_tmux_horizontal() {
     logs_tmux "h" "$@"
 }
 
+logs_tmux_vertical_completion() {
+  klaas_get_deployments "$@"
+}
+
+logs_tmux_horizontal_completion() {
+  klaas_get_deployments "$@"
+}
+
 register_klaas_extension "logs" "tmux.vertical"
 register_klaas_extension "logs" "tmux.horizontal"
