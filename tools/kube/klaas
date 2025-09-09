@@ -55,7 +55,7 @@ klaas_get_deployments() {
     fi
   done
 
-  printf "%s\n" "${deployment[@]}"
+  printf "%s\n" "${deployments[@]}"
 }
 
 klaas_get_serviceaccounts() {
