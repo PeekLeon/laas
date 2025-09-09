@@ -125,7 +125,15 @@ _klaas() {
 }
 compdef _klaas klaas
 
-
+# Alias Kube
+alias kcnup="klaas config new.userprofile"
+alias kcsn="klaas config set.namespace"
+alias ketib="klaas exec bash"
+alias ketis="klaas exec shell"
+alias kgcmv="klaas get configmap"
+alias kgdi="klaas get deployment.images"
+alias kltv="klaas logs tmux.vertical"
+alias klth="klaas logs tmux.horizontal"
 
 # Common extra
 : ${COMMON_EXTRA_DIR:="/.laas-config/zsh_common_extra"}
