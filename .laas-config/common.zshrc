@@ -64,8 +64,8 @@ trivy() {
       mkdir ${scan_path}/${split_name_version[1]}
     fi
     output=${split_name_version[1]}/$split_name_version[2]_${date_scan}
-    docker run -e http_proxy=${http_proxy} -e https_proxy=${https_proxy} --rm -v /var/run/docker.sock:/var/run/docker.sock -v ${scan_path_host}:${scan_path} docker.io/peekleon/trivy-updated-databases:latest image --skip-db-update --skip-java-db-update -f json -o ${scan_path}/${output}.json ${@}
-    docker run -e http_proxy=${http_proxy} -e https_proxy=${https_proxy} --rm -v /var/run/docker.sock:/var/run/docker.sock -v ${scan_path_host}:${scan_path} docker.io/peekleon/trivy-updated-databases:latest image --skip-db-update --skip-java-db-update -q -f table -o ${scan_path}/${output}.txt ${@}
+    docker run --env-file /.laas-config/trivy.env --rm -v /var/run/docker.sock:/var/run/docker.sock -v ${scan_path_host}:${scan_path} docker.io/peekleon/trivy-updated-databases:latest image --skip-db-update --skip-java-db-update -f json -o ${scan_path}/${output}.json ${@}
+    docker run --env-file /.laas-config/trivy.env --rm -v /var/run/docker.sock:/var/run/docker.sock -v ${scan_path_host}:${scan_path} docker.io/peekleon/trivy-updated-databases:latest image --skip-db-update --skip-java-db-update -q -f table -o ${scan_path}/${output}.txt ${@}
     jq ' .Results[]| try .Vulnerabilities[] | {VulnerabilityID: .VulnerabilityID, Severity: .Severity, PkgName: .PkgName, PkgPath: .PkgPath, InstalledVersion: .InstalledVersion, FixedVersion: .FixedVersion, Status: .Status }' ${scan_path}/${output}.json > ${scan_path}/${output}_parsed.json && jq -s '.' ${scan_path}/${output}_parsed.json > ${scan_path}/${output}_formatted.json && mv ${scan_path}/${output}_formatted.json ${scan_path}/${output}_parsed.json > /dev/null 2>&1
   elif [[ "$1" == "version" ]]; then
     docker run --rm docker.io/peekleon/trivy-updated-databases:latest version

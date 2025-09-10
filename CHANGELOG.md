@@ -1,4 +1,8 @@
+## LAAS 1.1.3 => **1.1.4**
 
+### New :
+- buildx-plugin
+- trivy env var file `/.laas-config/trivy.env`
 
 ## LAAS 1.1.2 => **1.1.3**
 
