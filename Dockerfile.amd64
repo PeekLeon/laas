@@ -63,7 +63,7 @@ COPY ./tools/laas /usr/local/bin/laas
 CMD [ "bash" ]
 
 
-FROM ubuntu:24.04 AS final
+FROM ubuntu:24.10 AS final
 
 # Copier les conf laas
 COPY .laas-config /.laas-config
