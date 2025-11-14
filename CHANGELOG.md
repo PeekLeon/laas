@@ -1,5 +1,21 @@
 
 
+## LAAS 1.1.9 => **1.1.10**
+
+| App | Status | Old Value | New Value |
+|-----|--------|-----------|-----------|
+| DOCKER | Updated | 5:28.5.0-1~ubuntu.24.04~noble | 5:29.0.0-1~ubuntu.24.04~noble |
+| STARSHIP | Updated | v1.23.0 | v1.24.0 |
+| KUBECONFORM | No change | v0.7.0 | v0.7.0 |
+| MC | No change | RELEASE.2025-08-13T08-35-41Z | RELEASE.2025-08-13T08-35-41Z |
+| OHMYZSH | Updated | c6482fa5be724e9504c6ffe92203440e4c3239b5 | dca16e8f9a20a84172044621a95832b4d5a1e057 |
+| HELM | Updated | v3.19.0 | v4.0.0 |
+| KUBECTL | Updated | v1.34.1 | v1.34.2 |
+| JQ | No change | jq-1.8.1 | jq-1.8.1 |
+| CODE_SERVER | Updated | v4.104.2 | v4.105.1 |
+| YQ | Updated | v4.47.2 | v4.48.1 |
+
+
 ## LAAS 1.1.8 => **1.1.9**
 
 | App | Status | Old Value | New Value |

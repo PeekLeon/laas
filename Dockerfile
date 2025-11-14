@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.4
-FROM ubuntu:latest AS builder
+FROM ubuntu:24.04 AS builder
 
 # Installer les prérequis de base
 RUN apt-get update && apt-get install -y \
