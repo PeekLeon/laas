@@ -1,5 +1,24 @@
 
 
+## LAAS 1.1.14 => **1.2.0**
+
+### New :
+  - Displaying a kubernetes namespace label with starship
+
+| App | Status | Old Value | New Value |
+|-----|--------|-----------|-----------|
+| DOCKER | Updated | 5:29.2.1-1~ubuntu.24.04~noble | 5:29.3.0-1~ubuntu.24.04~noble |
+| STARSHIP | No change | v1.24.2 | v1.24.2 |
+| KUBECONFORM | No change | v0.7.0 | v0.7.0 |
+| MC | No change | RELEASE.2025-08-13T08-35-41Z | RELEASE.2025-08-13T08-35-41Z |
+| OHMYZSH | Updated | 44f2a128aaee9f52391fe357d103e54f7f40fabb | 5292fea2ba2b76fc86f4878c3b1bfda31f86ca4b |
+| HELM | No change | v4.1.1 | v4.1.1 |
+| KUBECTL | Updated | v1.35.1 | v1.35.2 |
+| JQ | No change | jq-1.8.1 | jq-1.8.1 |
+| CODE_SERVER | Updated | v4.109.2 | v4.109.5 |
+| YQ | No change | v4.52.4 | v4.52.4 |
+
+
 ## LAAS 1.1.13 => **1.1.14**
 
 | App | Status | Old Value | New Value |

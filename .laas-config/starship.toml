@@ -7,6 +7,8 @@ $git_commit\
 $git_status\
 $fill\
 $kubernetes\
+${custom.kube_ns_label}\
+${custom.kube_ns_label_empty}\
 $cmd_duration\
 $time\
 $character\
@@ -23,7 +25,7 @@ background = '#282A36'
 current_line = '#44475A'
 primary = '#1E1F29'
 box = '#44475A'
-blue	= '#6272A4'
+blue	= '#3a5ab9'
 cyan = '#8BE9FD'
 green	= '#50FA7B'
 orange = '#FFB86C'
@@ -34,16 +36,30 @@ yellow = '#F1FA8C'
 
 
 [kubernetes]
-format='(fg:current_line)[](fg:$style)[$symbol$context](bg:$style)[](fg:$style bg:box)[ $namespace](fg:foreground bg:box)[](fg:box)'
+format='(fg:current_line)[](fg:$style)[$symbol$context](bg:$style)[](fg:$style bg:box)[ $namespace](fg:foreground bg:box)'
 disabled = false
 symbol = ""
 contexts = [
-  { context_pattern = ".*staging.*", style = "green"},
+  { context_pattern = ".*staging.*", style = "yellow"},
   { context_pattern = ".*prod.*", style = "red"},
-  { context_pattern = ".*infra.*", style = "orange"},
+  { context_pattern = ".*infra.*", style = "purple"},
   { context_pattern = ".*dev.*", style = "blue"},
-  { context_pattern = ".*silurien.*", style = "cyan", symbol = "󰙨"},
+  { context_pattern = ".*inter.*", style = "blue"},
+  { context_pattern = ".*sci.*", style = "green", symbol = "󰙨"},
 ]
+
+[custom.kube_ns_label]
+command = """
+if [ -n "$K8S_NAMESPACE_LABEL" ]; then
+  jq -r --arg key "$K8S_NAMESPACE_LABEL" '.[$key]' /.laas-config/klaas/namespace-label-cache
+fi
+"""
+when = 'test -n "$K8S_NAMESPACE_LABEL"'
+format = "[ ](fg:cyan bg:box)[$output](fg:foreground bg:cyan)[](fg:cyan)"
+
+[custom.kube_ns_label_empty]
+when = '[ -z "$K8S_NAMESPACE_LABEL" ]'
+format = "[](fg:box)"
 
 [username]
 format = '[─](fg:current_line)[](fg:$style)[](fg:primary bg:$style)[ $user](fg:foreground bg:$style)[](fg:$style bg:box)'

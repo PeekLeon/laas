@@ -41,6 +41,7 @@ PASSWORD=🙈🙉🙊
 PRE_COMMIT_HELM_LINT=true
 PRE_COMMIT_GITLAB_LINT=true
 PRE_COMMIT_GITLEAKS=true
+K8S_NAMESPACE_LABEL=app.kubernetes.io/instance
 ```
 
 | Variable | Description | Example / Default |
@@ -55,6 +56,7 @@ PRE_COMMIT_GITLEAKS=true
 | `PRE_COMMIT_HELM_LINT` | Check Helm charts on Git pre-commit | `true` / `false` |
 | `PRE_COMMIT_GITLAB_LINT` | Check `.gitlab-ci.yml` files on Git pre-commit | `true` / `false` |
 | `PRE_COMMIT_GITLEAKS` | Check for password leaks on Git pre-commit | `true` / `false` |
+| `K8S_NAMESPACE_LABEL` | Display the namespace label into starship | `app.kubernetes.io/instance` |
 
 > You can have multiple account configurations for Git.  
 > To do this, you can add GIT_ variables in the format `GIT_<SETTING>_<DOMAIN>` (for example, gitlab.com → GIT_LOGIN_GITLAB_COM).
