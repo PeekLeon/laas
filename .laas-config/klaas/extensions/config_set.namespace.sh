@@ -3,7 +3,7 @@
 
 config_set_namespace(){
   kubectl config set-context --current --namespace ${1}
-  kubectl get ns "${1}" -o jsonpath='{.metadata.labels}' > /.laas-config/klaas/namespace-label-cache
+  kubectl get ns "${1}" -o jsonpath='{.metadata.labels}' > ~/.kube/namespace-label-cache
 }
 
 config_set_namespace_completion(){

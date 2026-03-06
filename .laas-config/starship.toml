@@ -51,7 +51,7 @@ contexts = [
 [custom.kube_ns_label]
 command = """
 if [ -n "$K8S_NAMESPACE_LABEL" ]; then
-  jq -r --arg key "$K8S_NAMESPACE_LABEL" '.[$key]' /.laas-config/klaas/namespace-label-cache
+  jq -r --arg key "$K8S_NAMESPACE_LABEL" '.[$key]' ~/.kube/namespace-label-cache
 fi
 """
 when = 'test -n "$K8S_NAMESPACE_LABEL"'
