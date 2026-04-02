@@ -105,7 +105,7 @@ RUN set -eux \
     && apt-get update -y \
     && apt-get upgrade -y \
     && apt-get install -y --no-install-recommends \
-        wget curl netcat-traditional git vim sudo tmux \
+        wget curl netcat-traditional git vim sudo tmux unzip \
         inetutils-ping dnsutils rsync zsh openssh-client \
         ca-certificates gnupg lsb-release \
     && chsh -s /usr/bin/zsh \
