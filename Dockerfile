@@ -79,6 +79,15 @@ RUN set -a && . /tmp/versions.laas && set +a \
        fi \
     && chmod +x /usr/local/bin/mc
 
+# Installer sshs
+RUN set -a && . /tmp/versions.laas && set +a \
+    && if [ "$TARGETARCH" = "amd64" ]; then \
+           curl -sSLo /usr/local/bin/sshs "https://github.com/quantumsheep/sshs/releases/download/${SSHS_VERSION}/sshs-linux-amd64"; \
+       else \
+           curl -sSLo /usr/local/bin/sshs "https://github.com/quantumsheep/sshs/releases/download/${SSHS_VERSION}/sshs-darwin-arm64"; \
+       fi \
+    && chmod +x /usr/local/bin/sshs
+
 # Installer code-server
 RUN set -a && . /tmp/versions.laas && set +a \
     && if [ "$TARGETARCH" = "amd64" ]; then \

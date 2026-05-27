@@ -24,6 +24,7 @@ update(){
     [STARSHIP]=starship/starship
     [HELM]=helm/helm
     [CODE_SERVER]=coder/code-server
+    [SSHS]=quantumsheep/sshs
   )
 
   # Fichier de sortie
