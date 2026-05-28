@@ -88,6 +88,17 @@ RUN set -a && . /tmp/versions.laas && set +a \
        fi \
     && chmod +x /usr/local/bin/sshs
 
+# Installer opencode
+RUN set -a && . /tmp/versions.laas && set +a \
+    && if [ "$TARGETARCH" = "amd64" ]; then \
+           curl -Lo opencode.tar.gz https://github.com/anomalyco/opencode/releases/download/${OPENCODE_VERSION}/opencode-linux-x64.tar.gz; \
+       else \
+           curl -Lo opencode.tar.gz https://github.com/anomalyco/opencode/releases/download/${OPENCODE_VERSION}/opencode-linux-arm64.tar.gz; \
+       fi \
+    && tar -xzf opencode.tar.gz \
+    && mv opencode-linux-* /usr/lib/opencode \
+    && chmod +x /usr/lib/code-server/bin/opencode
+
 # Installer code-server
 RUN set -a && . /tmp/versions.laas && set +a \
     && if [ "$TARGETARCH" = "amd64" ]; then \

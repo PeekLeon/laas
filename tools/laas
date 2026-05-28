@@ -25,6 +25,7 @@ update(){
     [HELM]=helm/helm
     [CODE_SERVER]=coder/code-server
     [SSHS]=quantumsheep/sshs
+    [OPENCODE]=anomalyco/opencode
   )
 
   # Fichier de sortie
