@@ -96,8 +96,8 @@ RUN set -a && . /tmp/versions.laas && set +a \
            curl -Lo opencode.tar.gz https://github.com/anomalyco/opencode/releases/download/${OPENCODE_VERSION}/opencode-linux-arm64.tar.gz; \
        fi \
     && tar -xzf opencode.tar.gz \
-    && mv opencode-linux-* /usr/lib/opencode \
-    && chmod +x /usr/lib/code-server/bin/opencode
+    && mv opencode /usr/local/bin/opencode \
+    && chmod +x /usr/local/bin/opencode
 
 # Installer code-server
 RUN set -a && . /tmp/versions.laas && set +a \
