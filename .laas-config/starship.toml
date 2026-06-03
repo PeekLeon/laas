@@ -58,7 +58,7 @@ when = 'test -n "$K8S_NAMESPACE_LABEL"'
 format = "[ ](fg:cyan bg:box)[$output](fg:foreground bg:cyan)[](fg:cyan)"
 
 [custom.kube_ns_label_empty]
-when = '[ -z "$K8S_NAMESPACE_LABEL" ]'
+when = '[ -z "$K8S_NAMESPACE_LABEL" && kubectl config current-context >/dev/null 2>&1 ]'
 format = "[](fg:box)"
 
 [username]

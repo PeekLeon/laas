@@ -112,6 +112,7 @@ RUN set -a && . /tmp/versions.laas && set +a \
 
 COPY ./tools/kube/* /usr/local/bin/.
 COPY ./tools/laas /usr/local/bin/laas
+COPY ./tools/new-opencode-profile /usr/local/bin/new-opencode-profile
 
 CMD [ "bash" ]
 

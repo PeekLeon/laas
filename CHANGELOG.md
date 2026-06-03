@@ -1,5 +1,44 @@
 
 
+## LAAS 1.4.1 => **1.4.2**
+
+| App | Status | Old Value | New Value |
+|-----|--------|-----------|-----------|
+| DOCKER | No change | 5:29.5.2-1~ubuntu.24.04~noble | 5:29.5.2-1~ubuntu.24.04~noble |
+| STARSHIP | No change | v1.25.1 | v1.25.1 |
+| KUBECONFORM | No change | v0.7.0 | v0.7.0 |
+| MC | No change | RELEASE.2025-08-13T08-35-41Z | RELEASE.2025-08-13T08-35-41Z |
+| OPENCODE | No change | v1.15.13 | v1.15.13 |
+| OHMYZSH | Updated | c86ba78e2ff5c5a3e9282a84c0cc220dd3d5f253 | 70ad5e3df8f7bed68aa6672029496926e632aedd |
+| HELM | No change | v4.2.0 | v4.2.0 |
+| KUBECTL | No change | v1.36.1 | v1.36.1 |
+| SSHS | No change | 4.7.2 | 4.7.2 |
+| JQ | No change | jq-1.8.1 | jq-1.8.1 |
+| CODE_SERVER | Updated | v4.122.0 | v4.122.1 |
+| YQ | No change | v4.53.2 | v4.53.2 |
+
+
+## LAAS 1.4.1 => **1.4.2**
+
+### New :
+  - command : new-opencode-profile 
+
+| App | Status | Old Value | New Value |
+|-----|--------|-----------|-----------|
+| DOCKER | No change | 5:29.5.2-1~ubuntu.24.04~noble | 5:29.5.2-1~ubuntu.24.04~noble |
+| STARSHIP | No change | v1.25.1 | v1.25.1 |
+| KUBECONFORM | No change | v0.7.0 | v0.7.0 |
+| MC | No change | RELEASE.2025-08-13T08-35-41Z | RELEASE.2025-08-13T08-35-41Z |
+| OPENCODE | No change | v1.15.13 | v1.15.13 |
+| OHMYZSH | Updated | c86ba78e2ff5c5a3e9282a84c0cc220dd3d5f253 | 70ad5e3df8f7bed68aa6672029496926e632aedd |
+| HELM | No change | v4.2.0 | v4.2.0 |
+| KUBECTL | No change | v1.36.1 | v1.36.1 |
+| SSHS | No change | 4.7.2 | 4.7.2 |
+| JQ | No change | jq-1.8.1 | jq-1.8.1 |
+| CODE_SERVER | Updated | v4.122.0 | v4.122.1 |
+| YQ | No change | v4.53.2 | v4.53.2 |
+
+
 ## LAAS 1.4.0 => **1.4.1**
 
 | App | Status | Old Value | New Value |

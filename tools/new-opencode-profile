@@ -1,0 +1,34 @@
+#!/bin/bash
+profile=$1
+user=${profile}
+user_path="/opencode-profiles/${user}"
+
+if [ ! -d "${user_path}" ]; then
+  mkdir -p  ${user_path}
+fi
+
+if [ ! -e "${user_path}/.zshrc" ]; then
+    echo "source /.laas-config/common.zshrc" > ${user_path}/.zshrc
+fi
+
+if [ ! -d "${user_path}/.kube" ]; then
+  mkdir ${user_path}/.kube
+fi
+
+if [ ! -e "${user_path}/.kube/config" ]; then
+  touch ${user_path}/.kube/config
+fi
+
+mkdir -p ${user_path}/.config/opencode/
+if [[ ! -e "${user_path}/.config/opencode/opencode.json" && -f "${PATH_OPENCODE_CONF_TPL}" ]]; then
+  cp "${PATH_OPENCODE_CONF_TPL}" "${user_path}/.config/opencode/opencode.json"
+fi
+
+test_user_exist=$(cat /etc/passwd |grep "^${user}:" )
+if [ -z "${test_user_exist}" ];then
+  useradd ${user} --home ${user_path}
+  usermod --shell /bin/zsh ${user}
+fi
+
+chmod 600 ${user_path}/.kube/config
+chown -R ${user}:${user} ${user_path}
