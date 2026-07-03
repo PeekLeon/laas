@@ -7,7 +7,7 @@ if [ ! -d "${user_path}" ]; then
 fi
 
 if [ ! -e "${user_path}/.zshrc" ]; then
-    echo "source /usr/local/share/oh-my-zsh/common.zshrc" > ${user_path}/.zshrc
+    echo "source /.laas-config/common.zshrc" > ${user_path}/.zshrc
 fi
 
 if [ ! -d "${user_path}/.kube" ]; then
